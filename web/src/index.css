@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --nav-top: 3.5rem;
+  --nav-bottom: 3.75rem;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Mono", monospace;
+  background: #000;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* Prevent iOS rubber-band covering fixed chrome awkwardly */
+  overscroll-behavior-y: none;
+}
+
+/* Hide scrollbar but keep scroll */
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+/* Selection */
+::selection {
+  background: #fff;
+  color: #000;
+}
+
+@layer components {
+  /* Shared page shell: room for top bar + mobile bottom tabs */
+  .page-shell {
+    @apply min-h-[100dvh] min-w-0 bg-black px-4;
+    max-width: 100%;
+    overflow-x: clip;
+    padding-top: calc(var(--nav-top) + var(--safe-top) + 1.25rem);
+    padding-bottom: calc(var(--nav-bottom) + var(--safe-bottom) + 1.5rem);
+  }
+
+  /* Wide tables/heatmaps: scroll inside, never expand the document (breaks md: nav) */
+  .scroll-x {
+    @apply min-w-0 max-w-full overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (min-width: 768px) {
+    .page-shell {
+      @apply px-6;
+      --nav-top: 4rem;
+      padding-top: calc(var(--nav-top) + 2.5rem);
+      padding-bottom: 6rem;
+    }
+  }
+
+  /* FIFA card carousel — centered snap on phone, wrap on desktop */
+  .card-carousel {
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .card-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .card-slide {
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+  @media (max-width: 767px) {
+    /* Center active card: half of .pro-card-sm (168px) = 84px */
+    .card-carousel {
+      scroll-padding-inline: calc(50% - 84px);
+      padding-inline: calc(50% - 84px);
+      margin-inline: -1rem; /* bleed to page edge for full swipe */
+    }
+  }
+  @media (min-width: 768px) {
+    .card-slide {
+      scroll-snap-align: none;
+      scroll-snap-stop: normal;
+    }
+  }
+
+  /* Horizontal chip/tab scroller on phones */
+  .tab-scroll {
+    @apply flex gap-2 overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /*
+   * Pro cards use absolute pixel layout inside — NEVER shrink height via vw
+   * (that stacks name/seal/stats on top of each other). Keep fixed size;
+   * mobile lists scroll horizontally instead.
+   */
+  .pro-card-sm {
+    width: 168px;
+    height: 240px;
+  }
+  .pro-card-lg {
+    width: min(280px, calc(100vw - 2rem));
+    height: 420px;
+  }
+}

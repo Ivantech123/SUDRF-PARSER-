@@ -1,0 +1,54 @@
+{
+  "name": "sudrf-mcp",
+  "version": "0.1.0",
+  "author": {
+    "name": "Андреев Иван",
+    "url": "https://t.me/IBlog_Ivan"
+  },
+  "description": "MCP server and parser for ГАС Правосудие (sudrf.ru)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "sudrf-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test:probe": "tsx scripts/probe.ts",
+    "test:scrape": "tsx scripts/scrape-test.ts",
+    "test:case-parser": "tsx scripts/test-case-parser.ts",
+    "test:courts": "tsx scripts/test-courts.ts",
+    "test:rag": "tsx scripts/test-rag.ts",
+    "test:rag-mcp": "tsx scripts/test-rag-mcp.ts",
+    "test:auth": "tsx scripts/test-auth.ts",
+    "test:rest-api": "tsx scripts/test-rest-api.ts",
+    "compact:catalog": "tsx scripts/compact-catalog.ts",
+    "gen:courts": "tsx scripts/gen-courts.ts",
+    "user:add": "tsx scripts/create-user.ts add",
+    "user:list": "tsx scripts/create-user.ts list",
+    "user:key": "tsx scripts/create-user.ts key",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "sudrf",
+    "гас-правосудие",
+    "legal",
+    "parser"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "cheerio": "^1.0.0",
+    "iconv-lite": "^0.6.3",
+    "playwright": "^1.49.0",
+    "undici": "^7.28.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,130 @@
+SUDRF-MCP PARSER LICENSE
+Copyright (c) 2026 Андреев Иван (Andreev Ivan)
+
+Автор / правообладатель: Андреев Иван
+Контакт для связи (лицензия, коммерция, вопросы): https://t.me/IBlog_Ivan
+
+Версия 1.0
+
+────────────────────────────────────────────────────────────────────────────
+КРАТКО
+────────────────────────────────────────────────────────────────────────────
+
+1. Использовать продукт (парсер, MCP-сервер, worker, код методологии парсинга)
+   можно БЕСПЛАТНО, в любых объёмах, для любых законных целей —
+   личных, исследовательских, внутренних корпоративных и коммерческих.
+
+2. Если вы ЗАРАБАТЫВАЕТЕ ПРИБЫЛЬ ИМЕННО НА ПАРСЕРЕ (продаёте доступ к парсеру,
+   SaaS/API на его основе, продаёте выгрузки/датасеты, полученные парсером,
+   перепродаёте форк как коммерческий продукт парсинга и т.п.), то вы обязаны
+   платить правообладателю 10% (десять процентов) от чистой прибыли,
+   полученной от такой деятельности.
+
+3. Обычная юридическая/аналитическая работа «для себя» или для клиента,
+   где парсер — вспомогательный инструмент, а не продаваемый продукт,
+   под п. 2 НЕ подпадает (бесплатно).
+
+────────────────────────────────────────────────────────────────────────────
+1. DEFINITIONS
+────────────────────────────────────────────────────────────────────────────
+
+«Software» — исходный код и бинарные сборки репозитория sudrf-mcp, включая
+модули парсинга ГАС «Правосудие» (Tier 1 / Tier 2), captcha solvers,
+parser-worker, MCP/REST-обвязки парсера и документацию методологии парсинга.
+
+«Parser-Derived Profit» — чистая прибыль (выручка минус прямые расходы),
+полученная вами от коммерческой эксплуатации Software как продукта парсинга
+или от продажи результатов, произведённых Software на заказ/по подписке
+(API, batch-выгрузки, white-label парсер и аналоги).
+
+«Licensor» — правообладатель Software.
+
+────────────────────────────────────────────────────────────────────────────
+2. GRANT — FREE USE (ANY VOLUME)
+────────────────────────────────────────────────────────────────────────────
+
+Subject to this License, Licensor grants you a worldwide, royalty-free
+(except Section 3), non-exclusive, irrevocable (for compliant use) license to:
+
+  a) use, run, copy, modify, and redistribute the Software;
+  b) process any lawful volume of data;
+  c) integrate the Software into internal tools and workflows;
+  d) publish forks and patches under this same License.
+
+No fee is due for personal use, research, education, internal operations,
+or commercial activity that does not generate Parser-Derived Profit.
+
+────────────────────────────────────────────────────────────────────────────
+3. COMMERCIAL REVENUE SHARE (PARSER PROFIT ONLY)
+────────────────────────────────────────────────────────────────────────────
+
+If you generate Parser-Derived Profit, you must:
+
+  a) pay Licensor ten percent (10%) of Parser-Derived Profit; and
+  b) keep reasonably accurate books sufficient to compute that amount; and
+  c) remit payment at least quarterly (or as otherwise agreed in writing); and
+  d) notify Licensor before publicly offering a paid parser product/API
+     based on this Software.
+
+Contact for commercial terms / remittance:
+  Author: Andreev Ivan (Андреев Иван)
+  Telegram: https://t.me/IBlog_Ivan
+  GitHub: https://github.com/Ivantech123/SUDRF-PARSER-
+
+Failure to pay when Section 3 applies terminates the commercial grant under
+this Section; free non-profit use under Section 2 remains available if you
+cease Parser-Derived Profit activity and cure outstanding amounts.
+
+────────────────────────────────────────────────────────────────────────────
+4. ATTRIBUTION
+────────────────────────────────────────────────────────────────────────────
+
+Redistributions of source or substantial portions must retain this LICENSE
+file and copyright notice. Modified versions should be clearly marked as such.
+
+────────────────────────────────────────────────────────────────────────────
+5. NO TRADEMARK LICENSE
+────────────────────────────────────────────────────────────────────────────
+
+This License does not grant rights to Licensor’s names, logos, or marks
+except as needed for reasonable attribution.
+
+────────────────────────────────────────────────────────────────────────────
+6. COMPLIANCE WITH LAW
+────────────────────────────────────────────────────────────────────────────
+
+You are solely responsible for complying with applicable laws when accessing
+third-party sites (including sudrf.ru), robots/ToS rules, personal-data
+regulations, and court-data publication restrictions. This Software is a
+technical tool; Licensor does not authorize unlawful scraping or misuse.
+
+────────────────────────────────────────────────────────────────────────────
+7. DISCLAIMER OF WARRANTY
+────────────────────────────────────────────────────────────────────────────
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+────────────────────────────────────────────────────────────────────────────
+8. LIMITATION OF LIABILITY
+────────────────────────────────────────────────────────────────────────────
+
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY ARISING FROM USE OF THE SOFTWARE, WHETHER IN CONTRACT, TORT, OR
+OTHERWISE, INCLUDING LOST PROFITS OR DATA, EVEN IF ADVISED OF THE POSSIBILITY.
+
+────────────────────────────────────────────────────────────────────────────
+9. TERMINATION
+────────────────────────────────────────────────────────────────────────────
+
+Your rights under this License terminate automatically if you materially
+breach it and fail to cure within 30 days of notice. Sections 7–8 survive.
+
+────────────────────────────────────────────────────────────────────────────
+10. ENTIRE AGREEMENT
+────────────────────────────────────────────────────────────────────────────
+
+This License is the entire agreement regarding the Software unless superseded
+by a signed written commercial agreement with Licensor (which may change the
+percentage or payment schedule for your deployment).
