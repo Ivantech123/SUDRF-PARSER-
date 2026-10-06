@@ -20,7 +20,8 @@
 
 <p align="center">
   <img alt="license" src="https://img.shields.io/badge/license-custom%20(free%20%2B%2010%25)-0B1F3A?style=flat-square" />
-  <img alt="node" src="https://img.shields.io/badge/node-%3E%3D18-3C873A?style=flat-square" />
+  <img alt="node" src="https://img.shields.io/badge/node-%3E%3D20.18.1-3C873A?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-93%20offline-2E6BFF?style=flat-square" />
   <img alt="playwright" src="https://img.shields.io/badge/Tier%202-Playwright-2E6BFF?style=flat-square" />
   <img alt="ddddocr" src="https://img.shields.io/badge/captcha-ddddocr-C4A35A?style=flat-square" />
   <a href="https://t.me/IBlog_Ivan"><img alt="telegram" src="https://img.shields.io/badge/Telegram-IBlog__Ivan-26A5E4?style=flat-square&logo=telegram" /></a>
@@ -273,6 +274,8 @@ RAG, веб-кабинет и аналитика покрытия — **надс
 
 ## Установка
 
+Требуется **Node ≥ 20.18.1** (ограничение `undici@7` и `cheerio@1`) и Python 3 для OCR капчи.
+
 ```bash
 git clone https://github.com/Ivantech123/SUDRF-PARSER-.git sudrf-mcp
 cd sudrf-mcp
@@ -281,6 +284,16 @@ npx playwright install chromium
 pip install ddddocr pillow
 npm run build
 ```
+
+### Проверка сборки
+
+```bash
+npm run typecheck   # tsc по src + test
+npm test            # 93 офлайн-теста, без запросов к sudrf.ru
+```
+
+Тесты работают на сохранённых страницах из `scripts/*.html`, сеть не нужна —
+их можно запускать в CI и на машине без доступа к ГАС «Правосудие».
 
 ### Капча
 
@@ -305,6 +318,23 @@ npm run build
 | `MCP_PUBLIC_URL` | `http://localhost:PORT/mcp` | Публичный URL `/mcp`. |
 | `AUTO_PARSER` | — | `1` — автосбор; в `http` режиме включается по умолчанию (отключить: `0`). |
 | `AUTO_TIER2` | — | `1` — фоновый Tier-2 поиск. |
+
+### Надёжность и вежливость HTTP (Tier 1)
+
+Транспорт сам переживает кратковременные `429`/`5xx` и держит паузу между
+запросами к одному суду, чтобы не ловить бан Qrator.
+
+| Переменная | По умолчанию | Описание |
+|---|---|---|
+| `SUDRF_MAX_RETRIES` | `3` | Повторы после первой попытки при `429`/`5xx`/обрыве связи. `0` — без повторов. |
+| `SUDRF_RETRY_BASE_MS` | `800` | Базовый шаг backoff; удваивается, со случайным джиттером. |
+| `SUDRF_RETRY_CAP_MS` | `15000` | Максимальная пауза между повторами. |
+| `SUDRF_MAX_RETRY_AFTER_MS` | `60000` | Предел, до которого уважается заголовок `Retry-After`. |
+| `SUDRF_MIN_INTERVAL_MS` | `250` | Минимальный интервал между запросами к **одному** поддомену. `0` — выключить. |
+| `SUDRF_HTTP_PROXY` | — | Один или несколько шлюзов через запятую — ротация по кругу на каждый запрос. |
+
+Запросы к разным судам по-прежнему идут параллельно: ограничение действует
+только внутри одного поддомена.
 
 ## Локальный MCP (stdio)
 

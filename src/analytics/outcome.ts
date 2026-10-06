@@ -41,7 +41,10 @@ const STATUS_RULES: Rule[] = [
   { label: "denied", re: /в\s+иске\s+отказан|отказано\s+в\s+удовлетвор|отказать\s+в\s+иске/i, confidence: 0.9, source: "status" },
   { label: "settled", re: /мировое\s+соглашен|отказ\s+от\s+иска|признан[а-яё]*\s+иск/i, confidence: 0.85, source: "status" },
   { label: "terminated", re: new RegExp(`производств${W}.{0,40}прекращ|оставлен${W}\\s+без\\s+рассмотрен`, "i"), confidence: 0.85, source: "status" },
-  { label: "returned", re: new RegExp(`возвращ${W}\\s+заявлен|оставлен${W}\\s+без\\s+движен`, "i"), confidence: 0.8, source: "status" },
+  // sudrf writes this subject-first ("Заявление возвращено заявителю") at
+  // least as often as verb-first, so match both orders or returned claims
+  // fall into "unknown" and skew the win-rate denominator.
+  { label: "returned", re: new RegExp(`возвращ${W}\\s+(?:иск${W}\\s+)?заявлен|заявлен${W}\\s+возвращ|оставлен${W}\\s+без\\s+движен`, "i"), confidence: 0.8, source: "status" },
   { label: "appealed_changed", re: new RegExp(`отменен|изменен${W}\\s+решен`, "i"), confidence: 0.75, source: "status" },
   { label: "appealed_upheld", re: new RegExp(`оста(?:вить|влен${W})\\s+без\\s+изменен`, "i"), confidence: 0.8, source: "status" },
 ];

@@ -1,4 +1,4 @@
-import { fetchSudrf } from "./http.js";
+import { fetchSudrf, SudrfAntibotError, SudrfHttpError } from "./http.js";
 import { parseHearingSchedule, parseSearchResults, isNoResults, extractPaginationHrefs } from "./parsers.js";
 import { parseCaseDetails } from "./case-parser.js";
 import { courtBaseUrl, type CourtEntry } from "./courts.js";
@@ -66,19 +66,33 @@ export class SudrfClient {
     const path = `/modules.php?name=sud_delo&srv_num=1&H_date=${encodeURIComponent(date)}`;
     try {
       const res = await fetchSudrf({ subdomain: court.subdomain, path, preferHttp: court.http });
+      // A stable non-2xx (404/403/…) returns an error page, not a docket.
+      // Parsing it used to yield "no_table" plus a misleading "вёрстка
+      // изменилась" warning; report the status instead.
+      if (!res.ok) {
+        return {
+          court: court.name,
+          date,
+          count: 0,
+          items: [],
+          parseStatus: "http_error",
+          warning: `Суд ответил HTTP ${res.status} на запрос расписания (${res.url}).`,
+        };
+      }
       return parseHearingSchedule(res.html, court.name, date);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      if (/antibot|qrator|qaptcha/i.test(msg)) {
+      if (e instanceof SudrfAntibotError || /antibot|qrator|qaptcha/i.test(e instanceof Error ? e.message : String(e))) {
         return {
           court: court.name,
           date,
           count: 0,
           items: [],
           parseStatus: "antibot",
-          warning: msg,
+          warning: e instanceof Error ? e.message : String(e),
         };
       }
+      // 429/5xx that outlived the retry budget: let the caller back this court
+      // off rather than recording it as an empty docket.
       throw e;
     }
   }
@@ -115,6 +129,9 @@ export class SudrfClient {
           body,
           preferHttp: court.http,
         });
+        // Without this an error page parsed cleanly as "0 results found" and
+        // the browser fallback never ran.
+        if (!res.ok) throw new Error(`HTTP ${res.status} on search (${court.subdomain})`);
         pages = [res.html, ...(await this.paginateHttp(court.subdomain, res.html, court.http, maxPages))];
       } catch {
         // antibot or transport error → fall back to browser
@@ -172,7 +189,7 @@ export class SudrfClient {
       const path = href.startsWith("http") ? new URL(href).pathname + new URL(href).search : href;
       try {
         const res = await fetchSudrf({ subdomain, path, preferHttp });
-        if (!/case_id=/i.test(res.html)) continue;
+        if (!res.ok || !/case_id=/i.test(res.html)) continue;
         out.push(res.html);
         enqueue(res.html);
       } catch {
@@ -195,14 +212,19 @@ export class SudrfClient {
     let html: string;
     try {
       const res = await fetchSudrf({ subdomain: court.subdomain, path, preferHttp: court.http });
-      if (res.status === 429 || /429\s*Too Many Requests/i.test(res.html)) {
+      // Some courts answer 200 with a rate-limit body instead of a 429 status.
+      if (/429\s*Too Many Requests/i.test(res.html)) {
         throw new Error(`HTTP 429 rate limited (${court.subdomain})`);
       }
+      if (!res.ok) throw new Error(`HTTP ${res.status} on case card (${court.subdomain})`);
       html = res.html;
     } catch (e) {
+      // Rate limits and 5xx already survived the retry budget — launching a
+      // browser against an overloaded host only makes it worse.
+      if (e instanceof SudrfHttpError) throw e;
       const msg = e instanceof Error ? e.message : String(e);
       if (/429/.test(msg)) throw e;
-      // antibot challenge → use the browser session
+      // antibot challenge or transport fault → use the browser session
       html = await this.scraper_().getCasePage(court.subdomain, path, court.http);
     }
     if (/429\s*Too Many Requests/i.test(html) || (!/#cont1|id=['"]cont1['"]/i.test(html) && !/категория|уникальный идентификатор/i.test(html))) {

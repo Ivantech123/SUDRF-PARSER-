@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 20.18.1 is the floor undici@7 and cheerio@1 impose (see engines).
+        node: ["20.18.1", "22", "24"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # Playwright browsers are only needed for Tier 2 live scraping, which CI
+      # never does — skip the ~400 MB download.
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
+      - name: Typecheck (src + tests)
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      # Offline: every test runs against the captured pages in scripts/ or
+      # against pure helpers. No sudrf.ru request is made.
+      - name: Test
+        run: npm test

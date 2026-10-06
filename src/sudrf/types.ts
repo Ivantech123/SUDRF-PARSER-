@@ -16,6 +16,7 @@ export type HearingParseStatus =
   | "ok"           // table found, cases listed (may be 0 rows)
   | "empty_docket" // page explicitly says no hearings scheduled
   | "no_table"     // schedule table not found — page layout changed or blocked
+  | "http_error"   // server answered 429/5xx until the retry budget ran out
   | "antibot";     // Qrator/WebKnight challenge
 
 export interface HearingSchedule {

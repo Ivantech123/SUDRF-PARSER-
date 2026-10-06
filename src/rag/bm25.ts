@@ -9,7 +9,13 @@
 
 export interface Bm25Doc {
   id: string;            // unique chunk id
-  tokens: string[];      // pre-tokenized body
+  /**
+   * Distinct terms of the doc — all remove()/replace needs to purge postings.
+   * We deliberately do not retain the full token array: it is the largest
+   * object in the index, is not persisted, and keeping it made remove() a
+   * no-op on any index restored from disk.
+   */
+  terms: string[];
   len: number;           // token count (cached)
 }
 
@@ -37,10 +43,10 @@ export class Bm25Index {
   add(docId: string, tokens: string[]): void {
     this.remove(docId); // replace if present
     const len = tokens.length;
-    this.docs.set(docId, { id: docId, tokens, len });
-    this.totalLen += len;
     const tf = new Map<string, number>();
     for (const t of tokens) tf.set(t, (tf.get(t) ?? 0) + 1);
+    this.docs.set(docId, { id: docId, terms: [...tf.keys()], len });
+    this.totalLen += len;
     for (const [term, freq] of tf) {
       if (!this.postings.has(term)) this.postings.set(term, new Map());
       this.postings.get(term)!.set(docId, freq);
@@ -53,10 +59,7 @@ export class Bm25Index {
     if (!doc) return;
     this.docs.delete(docId);
     this.totalLen -= doc.len;
-    const seen = new Set<string>();
-    for (const t of doc.tokens) {
-      if (seen.has(t)) continue;
-      seen.add(t);
+    for (const t of doc.terms) {
       const post = this.postings.get(t);
       if (post) {
         post.delete(docId);
@@ -140,16 +143,22 @@ export class Bm25Index {
     this.docs.clear();
     this.postings.clear();
     this.df.clear();
-    for (const [id, len] of data.docLens) {
-      // we don't persist the full token array (it's reconstructible from
-      // postings if ever needed); store len only for scoring.
-      this.docs.set(id, { id, tokens: [], len });
-    }
+    // Postings first: the per-doc term lists are inverted out of them, so a
+    // restored index can still purge a doc on remove()/replace.
+    const termsByDoc = new Map<string, string[]>();
     for (const [term, pairs] of Object.entries(data.postings)) {
       const post = new Map<string, number>();
-      for (const [docId, tf] of pairs) post.set(docId, tf);
+      for (const [docId, tf] of pairs) {
+        post.set(docId, tf);
+        const list = termsByDoc.get(docId);
+        if (list) list.push(term);
+        else termsByDoc.set(docId, [term]);
+      }
       this.postings.set(term, post);
       this.df.set(term, post.size);
+    }
+    for (const [id, len] of data.docLens) {
+      this.docs.set(id, { id, terms: termsByDoc.get(id) ?? [], len });
     }
   }
 }

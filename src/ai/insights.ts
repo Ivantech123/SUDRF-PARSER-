@@ -1,4 +1,4 @@
-import type { MordoviaDashboard } from "../analytics/mordovia-dashboard.js";
+import type { MordoviaDashboard } from "../analytics/region-dashboard.js";
 import { chatCompletion, claudeHubConfigured, claudeHubModel } from "./claudehub.js";
 
 export interface AiInsightResult {

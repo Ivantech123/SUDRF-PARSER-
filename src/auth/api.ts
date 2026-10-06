@@ -27,7 +27,7 @@ import { serializeParserStats } from "../parser/stats-view.js";
 import { enrichCaseFromHtml } from "../parser/enrich-html.js";
 import { computeCoverage } from "../analytics/coverage.js";
 import { computeCollectionRate } from "../analytics/collection-rate.js";
-import { buildMordoviaDashboard } from "../analytics/mordovia-dashboard.js";
+import { buildMordoviaDashboard } from "../analytics/region-dashboard.js";
 import { generateMordoviaInsights } from "../ai/insights.js";
 import { generateCardInsight, type CardAiKind, type CardAiMode } from "../ai/card-insights.js";
 import { claudeHubConfigured } from "../ai/claudehub.js";

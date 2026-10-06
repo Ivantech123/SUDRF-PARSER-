@@ -15,7 +15,7 @@ import {
   buildParticipantDossier,
   warmParticipantIndex,
 } from "../participants/aggregate.js";
-import { buildMordoviaDashboard, type MordoviaDashboard } from "../analytics/mordovia-dashboard.js";
+import { buildMordoviaDashboard, type MordoviaDashboard } from "../analytics/region-dashboard.js";
 import { buildRepHeatmapsFromCatalog } from "../analytics/rep-heatmap.js";
 
 export const ListLawyersSchema = z.object({
